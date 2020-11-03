@@ -2,18 +2,17 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      //should seperate into individual key value pairs?
       step: 0,
-      name: '',
-      email: '',
-      password: ''
+      form1: {},
+      form2: {},
+      form3: {}
     }
     this.handleClick = this.handleClick.bind(this);
-    this.handleInput = this.handleInput.bind(this);
-    this.submitForm = this.submitForm.bind(this);
+    this.submitForm1 = this.submitForm1.bind(this);
+    this.submitForm2 = this.submitForm2.bind(this);
+    this.submitForm3 = this.submitForm3.bind(this);
   }
 
-  //increment step with each button click (up to purchase button)
   handleClick() {
     console.log('Click happened');
     let step = this.state.step;
@@ -27,38 +26,57 @@ class App extends React.Component {
     })
     console.log(this.state.step);
   }
-//  //should add values to state
-  handleInput(event) {
-    console.log('working')
-    this.setState({
-      [event.target.name]: event.target.value
-    })
-  }
 
-  submitForm(form) {
+  submitForm1(form) {
     console.log('submit is working');
-    form.preventDefault();
-    axios.post('/submit', form)
+    console.log('form', form);
+    axios.post('/form1', form)
       .then((response) => {
+        console.log('response', response)
         this.setState({
-          name: form.name
+          form1: [form]
         })
+        console.log(this.state.form1);
+        this.handleClick();
       })
       .catch((err) => {
         console.log(err);
       })
   }
-  // handleInput (event) {
-  //   const { name, value } = event.target
-  //   this.setState({
-  //     [name]: value
-  //   })
-  // }
 
+  submitForm2(form) {
+    console.log('submit is working');
+    console.log('form', form);
+    axios.post('/form2', form)
+      .then((response) => {
+        console.log('response', response)
+        this.setState({
+          form2: [form]
+        })
+        console.log(this.state.form2);
+        this.handleClick();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
 
-  //handleSubmit (last next button should render all data on page)
-
-  //nextButton
+  submitForm3(form) {
+    console.log('submit is working');
+    console.log('form', form);
+    axios.post('/form3', form)
+      .then((response) => {
+        console.log('response', response)
+        this.setState({
+          form3: [form]
+        })
+        console.log(this.state.form3);
+        this.handleClick();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
 
   render() {
     const step = this.state.step;
@@ -67,30 +85,26 @@ class App extends React.Component {
       button = <Checkout onClick={this.handleClick} />;
     }
     if (step === 1) {
-      button = <Step1 onClick={this.handleClick} />;
+      button = <Step1 submitForm1={this.submitForm1}/>;
     }
     if (step === 2) {
-      button = <Step2 onClick={this.handleClick} />;
+      button = <Step2 submitForm2={this.submitForm2}/>;
     }
     if (step === 3) {
-      button = <Step3 onClick={this.handleClick} />;
+      button = <Step3 submitForm3={this.submitForm3}/>;
     }
     if (step === 4) {
-      button = <Confirmation onClick={this.handleClick} />;
+      button = <Confirmation submitForm4={this.submitForm4}/>;
     }
     return (
       <div>
         <header>Lucy's Candles</header>
         {button}
-        {/* this will be the final next button */}
-        {/* <form onSubmit={this.handleSubmit}> */}
-        {/* </form> */}
       </div>
     )
   }
 }
 
-//stateless step components
 function Checkout(props) {
   return (
     <div>
@@ -99,83 +113,138 @@ function Checkout(props) {
   );
 }
 
-function Step1(props) {
-  return (
-    <div>
-      <form onSubmit={props.submitForm}>
+class Step1 extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: '',
+      email: '',
+      password: ''
+    }
+    this.handleInput = this.handleInput.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleInput(event) {
+    this.setState({[event.target.name]: event.target.value})
+  }
+  handleSubmit(event) {
+    event.preventDefault();
+    this.props.submitForm1(this.state);
+  }
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
         <label> name
-          <input name='name' value ={props.name} onChange={props.handleInput}/>
+        <input name='name' value={this.state.name} onChange={this.handleInput} />
         </label>
         <br />
         <label> email
-          <input name='email' value ={props.email} onChange={props.handleInput}/>
+        <input name='email' value={this.state.email} onChange={this.handleInput} />
         </label>
         <br />
         <label> password
-          <input name='password' value ={props.password} onChange={props.handleInput}/>
+        <input name='password' value={this.state.password} onChange={this.handleInput} />
         </label>
-        <button onClick={props.onClick}>Next</button>
+        <button>Next</button>
       </form>
-    </div>
-  );
+    )
+  }
 }
 
-function Step2(props) {
-  return (
-    <div>
-      <form>
+class Step2 extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      addressline1: '',
+      addressline2: '',
+      city: '',
+      state: '',
+      zip: '',
+      phone: ''
+    }
+    this.handleInput = this.handleInput.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleInput(event) {
+    this.setState({[event.target.name]: event.target.value})
+  }
+  handleSubmit(event) {
+    event.preventDefault();
+    this.props.submitForm2(this.state);
+  }
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
         <label> Address: line 1
-          <input name='addressline1' value ={props.addressline1} onChange={props.handleInput}/>
+          <input name='addressline1' value={this.state.addressline1} onChange={this.handleInput} />
         </label>
         <br />
         <label> line 2
-          <input name='addressline2' value ={props.addressline2} onChange={props.handleInput}/>
+          <input name='addressline2' value={this.state.addressline2} onChange={this.handleInput} />
         </label>
         <br />
         <label> city
-          <input name='city' value ={props.city} onChange={props.handleInput}/>
+          <input name='city' value={this.state.city} onChange={this.handleInput} />
         </label>
         <br />
         <label> state
-          <input name='state' value ={props.state} onChange={props.handleInput}/>
+          <input name='state' value={this.state.state} onChange={this.handleInput} />
         </label>
         <br />
         <label> zip code
-          <input name='zip' value ={props.zip} onChange={props.handleInput}/>
+          <input name='zip' value={this.state.zip} onChange={this.handleInput} />
         </label>
         <br />
         <label> phone number
-          <input name='phone' value ={props.phone} onChange={props.handleInput}/>
+          <input name='phone' value={this.state.phone} onChange={this.handleInput} />
         </label>
+        <button>Next</button>
       </form>
-      <button onClick={props.onClick}>Next</button>
-    </div>
-  );
+    )
+  }
 }
 
-function Step3(props) {
-  return (
-    <div>
-      <form>
+class Step3 extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      card: '',
+      date: '',
+      CVV: '',
+      zip: ''
+    }
+    this.handleInput = this.handleInput.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleInput(event) {
+    this.setState({[event.target.name]: event.target.value})
+  }
+  handleSubmit(event) {
+    event.preventDefault();
+    this.props.submitForm3(this.state);
+  }
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
         <label> card number
-          <input name='card' value ={props.card} onChange={props.handleInput}/>
+          <input name='card' value={this.state.card} onChange={this.handleInput} />
         </label>
         <br />
         <label> expiration date
-          <input name='date' value ={props.date} onChange={props.handleInput}/>
+          <input name='date' value={this.state.date} onChange={this.handleInput} />
         </label>
         <br />
         <label> CVV
-          <input name='CVV' value ={props.CVV} onChange={props.handleInput}/>
+          <input name='CVV' value={this.state.CVV} onChange={this.handleInput} />
         </label>
         <br />
         <label> billing zip code
-          <input name='zip' value ={props.zip} onChange={props.handleInput}/>
+          <input name='zip' value={this.state.zip} onChange={this.handleInput} />
         </label>
+        <button>Next</button>
       </form>
-      <button onClick={props.onClick}>Next</button>
-    </div>
-  );
+    )
+  }
 }
 
 function Confirmation(props) {
