@@ -3,21 +3,22 @@ class App extends React.Component {
     super(props);
     this.state = {
       step: 0,
-      form1: {},
-      form2: {},
-      form3: {}
+      form1: '',
+      form2: '',
+      form3: ''
     }
     this.handleClick = this.handleClick.bind(this);
     this.submitForm1 = this.submitForm1.bind(this);
     this.submitForm2 = this.submitForm2.bind(this);
     this.submitForm3 = this.submitForm3.bind(this);
+    this.startOver = this.startOver.bind(this);
   }
 
   handleClick() {
     console.log('Click happened');
     let step = this.state.step;
-    if (step >= 3) {
-      step = 4;
+    if (step >= 4) {
+      step = 5;
     } else {
       step++;
     }
@@ -34,7 +35,7 @@ class App extends React.Component {
       .then((response) => {
         console.log('response', response)
         this.setState({
-          form1: [form]
+          form1: [form.name, form.email, form.password]
         })
         console.log(this.state.form1);
         this.handleClick();
@@ -51,7 +52,7 @@ class App extends React.Component {
       .then((response) => {
         console.log('response', response)
         this.setState({
-          form2: [form]
+          form2: [form.addressline1, form.addressline2, form.city, form.state, form.zip, form.phone]
         })
         console.log(this.state.form2);
         this.handleClick();
@@ -68,7 +69,7 @@ class App extends React.Component {
       .then((response) => {
         console.log('response', response)
         this.setState({
-          form3: [form]
+          form3: [form.card, form.date, form.CVV, form.zip]
         })
         console.log(this.state.form3);
         this.handleClick();
@@ -76,6 +77,15 @@ class App extends React.Component {
       .catch((err) => {
         console.log(err);
       })
+  }
+
+  startOver() {
+    this.setState({
+      step: 0,
+      form1: '',
+      form2: '',
+      form3: ''
+    })
   }
 
   render() {
@@ -94,7 +104,7 @@ class App extends React.Component {
       button = <Step3 submitForm3={this.submitForm3}/>;
     }
     if (step === 4) {
-      button = <Confirmation submitForm4={this.submitForm4}/>;
+      button = <Confirmation onClick={this.startOver} form1={this.state.form1} form2={this.state.form2} form3={this.state.form3}/>;
     }
     return (
       <div>
@@ -250,6 +260,13 @@ class Step3 extends React.Component {
 function Confirmation(props) {
   return (
     <div>
+      <div>Name: {props.form1[0]}</div>
+      <div>Email: {props.form1[1]}</div>
+      <div>Password: {props.form1[2]}</div>
+      <div>Address: {`${props.form2[0]} ${props.form2[1]}. ${props.form2[2]}, ${props.form2[3]} ${props.form2[4]}`} </div>
+      <div>Phone: {props.form2[5]}</div>
+      <div>Card Information: {props.form3[0]}</div>
+      <div>Billing Zipcode: {props.form3[3]}</div>
       <button onClick={props.onClick}>Purchase</button>
     </div>
   );
